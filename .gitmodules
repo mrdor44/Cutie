@@ -1,0 +1,9 @@
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest.git
+[submodule "subhook"]
+	path = subhook
+	url = https://github.com/Zeex/subhook.git
+[submodule "C-Mock"]
+	path = C-Mock
+	url = https://github.com/hjagodzinski/C-Mock.git
