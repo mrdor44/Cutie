@@ -168,7 +168,7 @@
     class MockContainer_##func : public MockContainer<MockContainer_##func> { \
     public: \
         MockContainer_##func() : MockContainer<MockContainer_##func>((void*)(func), nullptr) {} \
-        MockContainer_##func(void* stub) : MockContainer<MockContainer_##func>((void*)(func), stub) {} \
+        explicit MockContainer_##func(void* stub) : MockContainer<MockContainer_##func>((void*)(func), stub) {} \
         MOCK_METHOD##num_params(__CMOCK_STUB__##func, decltype(func)); \
     }; \
     CMOCK_MOCK_FUNCTION##num_params(MockContainer_##func, __CMOCK_STUB__##func, decltype(func)); \
