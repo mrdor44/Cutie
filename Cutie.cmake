@@ -93,7 +93,8 @@ function(add_cutie_test_target)
             ${CUTIE_DIR}
             ${GOOGLETEST_DIR}/googlemock/include
             ${GOOGLETEST_DIR}/googletest/include
-            ${CMOCK_DIR}/include)
+            ${CMOCK_DIR}/include
+            ${SUBHOOK_DIR})
     target_compile_options(${TEST_NAME} PUBLIC ${COVERAGE_FLAGS})
     target_link_libraries(${TEST_NAME} gmock_main subhook ${CMOCK_LINKER_FLAGS} ${COVERAGE_FLAGS})
     set(TEST_TARGETS ${TEST_TARGETS} ${TEST_NAME} PARENT_SCOPE)
