@@ -47,7 +47,7 @@ FetchContent_Declare(c_mock
     GIT_REPOSITORY
         https://github.com/hjagodzinski/C-Mock.git
     GIT_TAG
-        v0.2
+        v0.2.1
 )
 FetchContent_GetProperties(c_mock)
 FetchContent_MakeAvailable(c_mock)
