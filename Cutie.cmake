@@ -88,7 +88,7 @@ function(add_cutie_test_target)
             ${CUTIE_DIR}
             ${GOOGLETEST_DIR}/googlemock/include
             ${GOOGLETEST_DIR}/googletest/include
-            ${CMOCK_DIR}/include
+            ${C_MOCK_DIR}/include
             ${SUBHOOK_DIR}
     )
     
