@@ -54,8 +54,21 @@ project(my_project CXX C)
 
 add_executable(my_project src/module1.c src/module2.c src/main.c)
 
-set(CUTIE_DIR Cutie)
+FetchContent_Declare(cutie
+    GIT_REPOSITORY
+        https://github.com/dolevelbaz/Cutie.git
+    GIT_TAG
+        1.1
+)
+FetchContent_GetProperties(cutie)
+if (NOT cutie_POPULATED)
+    FetchContent_Pupulate(cutie)
+    # without add_subdirectories since Cutie doesn't support it
+endif()
+
+set(CUTIE_DIR ${cutie_SOURCE_DIR})
 include(${CUTIE_DIR}/Cutie.cmake)
+
 add_cutie_test_target(TEST test/test_module1.cpp SOURCES src/module1.c)
 add_cutie_test_target(TEST test/test_module2.cpp SOURCES src/module2.c)
 add_cutie_all_tests_target()
@@ -65,8 +78,8 @@ add_cutie_coverage_targets()
 As you can see from the above example, including Cutie in your project is fairly easy. All you need to do is:
 
 1. Set your project's languages to `CXX` and `C`.
-2. Set the variable `CUTIE_DIR` to the relative or absolute path to Cutie's directory.
-3. `include(${CUTIE_DIR}/Cutie.cmake)`.
+2. Add Cutie as a CMake dependency.
+3. Set the variable `CUTIE_DIR` to the relative or absolute path to Cutie's directory.
 4. Call `add_cutie_test_target` for each test you've written, passing it the test file and all related source files.
    **Note:** Don't pass a source file that has a `main()` function to `add_cutie_test_target`, as it provides its own `main()` function, using GoogleTest.
 5. Call `add_cutie_all_tests_target` if you want to have the `all_tests` target.
