@@ -81,7 +81,7 @@ function(add_cutie_test_target)
 
     # define flags
     set(COVERAGE_FLAGS -fprofile-arcs -ftest-coverage --coverage)
-    set(C_MOCK_LINKER_FLAGS "-rdynamic -Wl,--no-as-needed -ldl")
+    set(C_MOCK_LINKER_FLAGS -rdynamic -Wl,--no-as-needed -ldl)
 
     target_include_directories(${TEST_NAME}
         PUBLIC
