@@ -23,7 +23,7 @@ FetchContent_Declare(googletest
     GIT_REPOSITORY
         https://github.com/google/googletest.git
     GIT_TAG
-        release-1.8.1 # TODO update to 1.10?
+        release-1.10.0
 )
 set(INSTALL_GTEST OFF)
 FetchContent_GetProperties(googletest)
@@ -35,7 +35,7 @@ FetchContent_Declare(subhook
     GIT_REPOSITORY
         https://github.com/Zeex/subhook.git
     GIT_TAG
-        v0.7 # TODO update to v0.8.1?
+        v0.8.1
 )
 set(SUBHOOK_STATIC ON)
 set(SUBHOOK_TESTS OFF)
@@ -47,7 +47,7 @@ FetchContent_Declare(c_mock
     GIT_REPOSITORY
         https://github.com/hjagodzinski/C-Mock.git
     GIT_TAG
-        v0.2.0
+        0207b3026f04bbdf0bd9d9f8dfd00945a4318251 # TODO replace with tag when available
 )
 FetchContent_GetProperties(c_mock)
 FetchContent_MakeAvailable(c_mock)
