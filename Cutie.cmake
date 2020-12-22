@@ -47,7 +47,7 @@ FetchContent_Declare(c_mock
     GIT_REPOSITORY
         https://github.com/hjagodzinski/C-Mock.git
     GIT_TAG
-        0207b3026f04bbdf0bd9d9f8dfd00945a4318251 # TODO replace with tag when available
+        v0.3.0
 )
 FetchContent_GetProperties(c_mock)
 FetchContent_MakeAvailable(c_mock)
