@@ -126,9 +126,9 @@ endfunction()
 # Same parameters as 'add_cutie_test_target' but the TEST is a list instead of a single file.
 function(add_cutie_test_targets)
     # empty prefix means variables start with _
-    cmake_parse_arguments(PARSE_ARGV 0 "" "" "" "FILES;SOURCES;COMPILER_FLAGS;COMPILER_DEFINITIONS;LINKER_FLAGS;INCLUDE_DIRECTORIES;LINK_LIBRARIES")
+    cmake_parse_arguments(PARSE_ARGV 0 "" "" "" "TESTS;SOURCES;COMPILER_FLAGS;COMPILER_DEFINITIONS;LINKER_FLAGS;INCLUDE_DIRECTORIES;LINK_LIBRARIES")
 
-    foreach(TEST_FILE ${_FILES})
+    foreach(TEST_FILE ${_TESTS})
         message(DOLEV ${TEST_FILE})
         add_single_test(TEST ${TEST_FILE} SOURCES ${_SOURCES} COMPILER_FLAGS ${_COMPILER_FLAGS} COMPILER_DEFINITIONS ${_COMPILER_DEFINITIONS} LINKER_FLAGS ${_LINKER_FLAGS} INCLUDE_DIRECTORIES ${_INCLUDE_DIRECTORIES} LINK_LIBRARIES ${_LINK_LIBRARIES})
     endforeach()
