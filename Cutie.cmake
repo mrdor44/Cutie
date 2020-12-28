@@ -122,6 +122,19 @@ function(add_cutie_test_target)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endfunction()
 
+# Define multiple test targets at once using same definitions, e.g. source files.
+# Same parameters as 'add_cutie_test_target' but the TEST is a list instead of a single file.
+function(add_cutie_test_targets)
+    # empty prefix means variables start with _
+    cmake_parse_arguments(PARSE_ARGV 0 "" "" "" "FILES;SOURCES;COMPILER_FLAGS;COMPILER_DEFINITIONS;LINKER_FLAGS;INCLUDE_DIRECTORIES;LINK_LIBRARIES")
+
+    foreach(TEST_FILE ${_FILES})
+        message(DOLEV ${TEST_FILE})
+        add_single_test(TEST ${TEST_FILE} SOURCES ${_SOURCES} COMPILER_FLAGS ${_COMPILER_FLAGS} COMPILER_DEFINITIONS ${_COMPILER_DEFINITIONS} LINKER_FLAGS ${_LINKER_FLAGS} INCLUDE_DIRECTORIES ${_INCLUDE_DIRECTORIES} LINK_LIBRARIES ${_LINK_LIBRARIES})
+    endforeach()
+endfunction()
+
+# TODO runs tests at build time!
 # Define the `all_tests` target that runs all tests added with add_cutie_test_target()
 # Function has no parameters
 function(add_cutie_all_tests_target)
