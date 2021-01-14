@@ -12,25 +12,25 @@ As said before, Cutie integrates several UT frameworks and libraries and provide
 
 ### Full Unit Testing Framework
 
-Cutie employs **GoogleTest** to provide a full unit testing framework, including test definitions, a built in runner, assertions, etc. For the full specification of what's provided in GoogleTest, refer to the full [GoogleTest Documentation](googletest/README.md).
+Cutie employs **GoogleTest** to provide a full unit testing framework, including test definitions, a built in runner, assertions, etc. For the full specification of what's provided in GoogleTest, refer to the full [GoogleTest Documentation](https://github.com/google/googletest/blob/master/README.md).
 
 Some of the interesting documentation pages are:
 
-- [Primer](googletest/googletest/docs/primer.md): Details basic concepts, assertions and writing simple tests.
-- [Advanced](googletest/googletest/docs/advanced.md): Explicit Success and Failure, Predicate Assertions for Better Error Messages, Floating Point Comparison, Death Tests, Using Assertions in Sub-Routines, Propagating Fatal Failures, Logging Additional Information, Sharing Resources Between Tests in the Same Test Case, Global Set-Up and Tear-Down, Value Parameterized Tests, Testing Private Code, Getting the Current Test's Name, Running Test Programs: Advanced Options.
-- [FAQ](googletest/googletest/docs/faq.md): Contains many interesting entries.
+- [Primer](https://github.com/google/googletest/blob/master/googletest/docs/primer.md): Details basic concepts, assertions and writing simple tests.
+- [Advanced](https://github.com/google/googletest/blob/master/googletest/docs/advanced.md): Explicit Success and Failure, Predicate Assertions for Better Error Messages, Floating Point Comparison, Death Tests, Using Assertions in Sub-Routines, Propagating Fatal Failures, Logging Additional Information, Sharing Resources Between Tests in the Same Test Case, Global Set-Up and Tear-Down, Value Parameterized Tests, Testing Private Code, Getting the Current Test's Name, Running Test Programs: Advanced Options.
+- [FAQ](https://github.com/google/googletest/blob/master/googletest/docs/faq.md): Contains many interesting entries.
 
 ### Hooks
 
 **Subhook** is a library for setting and managing hooks on C functions. Cutie employs Subhook to stub C functions, and later, using CMock, mocking them using GoogleMock.
 
-To set hooks using Subhook alone, you can check out the [Subhook Documentation](subhook/README.md). However, we recommend using Cutie's `hook.hpp` header file to set hooks. The documentation is within [`hook.hpp`](hook.hpp) itself.
+To set hooks using Subhook alone, you can check out the [Subhook Documentation](https://github.com/Zeex/subhook/blob/master/README.md). However, we recommend using Cutie's `hook.hpp` header file to set hooks. The documentation is within [`hook.hpp`](hook.hpp) itself.
 
 ### Mocks
 
 Cutie's main feature, and the reason why it was created, was to support **GoogleMock** mocks on C functions. Cutie implements this using the CMock library.
 
-To set mocks on C functions, refer to the [`mock.hpp`](mock.hpp), which contains both the documentation and the implementation. Cutie's mocks enable setting GoogleMock expectations on the mocks. For the full capabilities of GoogleMock, refer to the [GoogleMock Documentation](googletest/googlemock/README.md) and [GoogleMock For Dummies](googletest/googlemock/docs/for_dummies.md).
+To set mocks on C functions, refer to the [`mock.hpp`](mock.hpp), which contains both the documentation and the implementation. Cutie's mocks enable setting GoogleMock expectations on the mocks. For the full capabilities of GoogleMock, refer to the [GoogleMock Documentation](https://github.com/google/googletest/blob/master/googlemock/README.md) and [GoogleMock For Dummies](https://github.com/google/googletest/blob/master/googlemock/docs/for_dummies.md).
 
 ## GoogleMock or GoogleTest?
 
@@ -46,7 +46,7 @@ For a sample repository that uses Cutie for unit tests, refer to [datastructures
 
 ## Include Cutie in your project
 
-Cutie provides a [Cutie.cmake](Cutie.cmake) CMake file that should be included from your own project's CMakeList.txt file. An example project's CMakeLists.txt file:
+Cutie provides a [Cutie.cmake](Cutie.cmake) CMake file that should be included from your own project's CMakeList.txt file. An example project's CMakeLists.txt file (fill in <RELEVANT_TAG>):
 
 ```cmake
 cmake_minimum_required(VERSION 3.10)
@@ -54,8 +54,21 @@ project(my_project CXX C)
 
 add_executable(my_project src/module1.c src/module2.c src/main.c)
 
-set(CUTIE_DIR Cutie)
+FetchContent_Declare(cutie
+    GIT_REPOSITORY
+        https://github.com/dolevelbaz/Cutie.git
+    GIT_TAG
+        <RELEVANT_TAG>
+)
+FetchContent_GetProperties(cutie)
+if (NOT cutie_POPULATED)
+    FetchContent_Pupulate(cutie)
+    # without add_subdirectories since Cutie doesn't support it
+endif()
+
+set(CUTIE_DIR ${cutie_SOURCE_DIR})
 include(${CUTIE_DIR}/Cutie.cmake)
+
 add_cutie_test_target(TEST test/test_module1.cpp SOURCES src/module1.c)
 add_cutie_test_target(TEST test/test_module2.cpp SOURCES src/module2.c)
 add_cutie_all_tests_target()
@@ -65,8 +78,8 @@ add_cutie_coverage_targets()
 As you can see from the above example, including Cutie in your project is fairly easy. All you need to do is:
 
 1. Set your project's languages to `CXX` and `C`.
-2. Set the variable `CUTIE_DIR` to the relative or absolute path to Cutie's directory.
-3. `include(${CUTIE_DIR}/Cutie.cmake)`.
+2. Add Cutie as a CMake dependency.
+3. Set the variable `CUTIE_DIR` to the relative or absolute path to Cutie's directory.
 4. Call `add_cutie_test_target` for each test you've written, passing it the test file and all related source files.
    **Note:** Don't pass a source file that has a `main()` function to `add_cutie_test_target`, as it provides its own `main()` function, using GoogleTest.
 5. Call `add_cutie_all_tests_target` if you want to have the `all_tests` target.
