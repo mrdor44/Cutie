@@ -2,7 +2,6 @@
 	File name:	c_scoped_hook.hpp
 	Project  :	Cutie
 	Author   :	Dor Cohen
-	Created  :	21/05/2020
 
     Reimplements Subhook's ScopedHookInstall and ScopedHookRemove using Subhook's
     C interface, because the provided classes don't support replacing stubs.
