@@ -1,7 +1,7 @@
 /********************************************************************
 	File name:	mock_container.hpp
 	Project  :	Cutie
-	Author   :	t_dorco
+	Author   :	Dor Cohen
 	Created  :	14/06/2018
 
 	Contains implementation needed for cmock_api.h
