@@ -98,7 +98,12 @@ function(add_cutie_test_target)
     target_compile_options(${TEST_NAME} PUBLIC ${COVERAGE_FLAGS})
     target_link_libraries(${TEST_NAME} gmock_main subhook ${CMOCK_LINKER_FLAGS} ${COVERAGE_FLAGS})
     set(TEST_TARGETS ${TEST_TARGETS} ${TEST_NAME} PARENT_SCOPE)
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+	
+	if (DEFINED CUTIE_GTEST_XML)
+		set (TEST_ARGS "--gtest_output=xml:${TEST_NAME}.xml")
+	endif()
+    
+	add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME} ${TEST_ARGS})
 endfunction()
 
 # Defines the `all_tests` target that runs all tests added with add_cutie_test_target()
