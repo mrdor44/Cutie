@@ -40,6 +40,20 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 include(CTest)
 
+
+if (WIN32)
+  option(USE_DLFCN_WIN32_PACKAGE "Use dlfcn-win32 system package (if false dlfcn is build from source)" FALSE)
+  if(${USE_DLFCN_WIN32_PACKAGE})
+    #MSYS2 case (dlfcn package can be installed)
+    find_package(dlfcn-win32 REQUIRED)
+    set(CMAKE_DL_LIBS dlfcn-win32::dl)
+    set(BUILD_DLFCN FALSE)
+  else()
+    set(CMAKE_DL_LIBS dl)
+    set(BUILD_DLFCN TRUE)
+  endif()
+endif ()
+
 ## Functions
 function(verify_variable variable_name)
     if (NOT DEFINED ${variable_name})
@@ -70,18 +84,36 @@ function(add_cutie_test_target)
     set(GOOGLETEST_DIR ${CUTIE_DIR}/googletest)
     set(SUBHOOK_DIR ${CUTIE_DIR}/subhook)
     set(CMOCK_DIR ${CUTIE_DIR}/C-Mock)
+    if(${BUILD_DLFCN})
+	if (NOT DEFINED DLFCN_DIR)
+	message (FATAL_ERROR "DLFCN build required, please provide dlfcn location using variable DLFCN_DIR")
+	endif()
+    endif()
+    set(GOOGLETEST_BIN_DIR ${GOOGLETEST_DIR}/build)
+    set(SUBHOOK_BIN_DIR ${SUBHOOK_DIR}/build)
+    if(${BUILD_DLFCN})
+    set(DLFCN_BIN_DIR ${DLFCN_DIR}/build)
+    endif()
 
     ## Compiler & Linker flags
     set(COVERAGE_FLAGS -fprofile-arcs -ftest-coverage --coverage)
+    
+    if(WIN32)
+    set(CMOCK_LINKER_FLAGS "-Wl,--export-all-symbols,--no-as-needed -O0")
+    else()
     set(CMOCK_LINKER_FLAGS "-rdynamic -Wl,--no-as-needed -ldl")
+    endif()
 
     ## Compiling dependencies
     if (NOT DEFINED _CUTIE_DEPENDENCIES_COMPILED)
         set(INSTALL_GTEST OFF)
-        add_subdirectory(${GOOGLETEST_DIR} EXCLUDE_FROM_ALL)
+        add_subdirectory(${GOOGLETEST_DIR} ${GOOGLETEST_BIN_DIR} EXCLUDE_FROM_ALL)
         set(SUBHOOK_STATIC ON)
         set(SUBHOOK_TESTS OFF)
-        add_subdirectory(${SUBHOOK_DIR} EXCLUDE_FROM_ALL)
+        add_subdirectory(${SUBHOOK_DIR} ${SUBHOOK_BIN_DIR} EXCLUDE_FROM_ALL)
+        if(${BUILD_DLFCN})
+        add_subdirectory(${DLFCN_DIR} ${DLFCN_BIN_DIR} EXCLUDE_FROM_ALL)
+        endif()
         set(_CUTIE_DEPENDENCIES_COMPILED 1 PARENT_SCOPE)
     endif ()
 
@@ -94,9 +126,11 @@ function(add_cutie_test_target)
             ${GOOGLETEST_DIR}/googlemock/include
             ${GOOGLETEST_DIR}/googletest/include
             ${CMOCK_DIR}/include
-            ${SUBHOOK_DIR})
+            ${SUBHOOK_DIR}
+            "$<$<BOOL:${BUILD_DLFCN}>:${DLFCN_DIR}/src>"
+            )
     target_compile_options(${TEST_NAME} PUBLIC ${COVERAGE_FLAGS})
-    target_link_libraries(${TEST_NAME} gmock_main subhook ${CMOCK_LINKER_FLAGS} ${COVERAGE_FLAGS})
+    target_link_libraries(${TEST_NAME} ${CMAKE_DL_LIBS} gmock_main subhook ${CMOCK_LINKER_FLAGS} ${COVERAGE_FLAGS})
     set(TEST_TARGETS ${TEST_TARGETS} ${TEST_NAME} PARENT_SCOPE)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endfunction()
