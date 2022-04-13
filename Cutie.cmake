@@ -98,7 +98,12 @@ function(add_cutie_test_target)
     target_compile_options(${TEST_NAME} PUBLIC ${COVERAGE_FLAGS})
     target_link_libraries(${TEST_NAME} gmock_main subhook ${CMOCK_LINKER_FLAGS} ${COVERAGE_FLAGS})
     set(TEST_TARGETS ${TEST_TARGETS} ${TEST_NAME} PARENT_SCOPE)
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+	
+	if (DEFINED CUTIE_GTEST_XML)
+		set (TEST_ARGS "--gtest_output=xml:${TEST_NAME}.xml")
+	endif()
+    
+	add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME} ${TEST_ARGS})
 endfunction()
 
 # Defines the `all_tests` target that runs all tests added with add_cutie_test_target()
@@ -124,6 +129,54 @@ function(add_cutie_coverage_targets)
             EXECUTABLE ctest
             EXCLUDE "${CUTIE_DIR}/*" "/usr/include/*")
     add_custom_target(clean_coverage
+            rm --recursive --force ${COVERAGE_DIR}
+            COMMAND find -iname "*.gcda" -delete
+            COMMAND find -iname "*.gcno" -delete
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            VERBATIM
+            COMMENT "Deleting coverage information. Rebuild after this.")
+endfunction()
+
+
+# Defines the following two targets:
+#   1. `coverage_gcovr_xml` runs all tests and collects coverage in xml format
+#   2. `clean_coverage_gcovr_xml` cleans coverage information
+# The collected coverage report resides in the coverage/ directory under the project's directory.
+# Function has no parameters
+function(add_cutie_coverage_gcovr_targets)
+    include(${CUTIE_DIR}/inc/CodeCoverage.cmake)
+    set(COVERAGE_DIR coverage_gcovr_xml)
+    setup_target_for_coverage_gcovr_xml(
+            NAME ${COVERAGE_DIR}
+	    BASE_DIRECTORY ${BASE_DIRECTORY}
+            EXECUTABLE ctest
+            EXCLUDE "${CUTIE_DIR}/*" "/usr/include/*"
+			)
+    add_custom_target(clean_coverage_gcovr_xml
+            rm --recursive --force ${COVERAGE_DIR}
+            COMMAND find -iname "*.gcda" -delete
+            COMMAND find -iname "*.gcno" -delete
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            VERBATIM
+            COMMENT "Deleting coverage information. Rebuild after this.")
+endfunction()
+
+
+
+# Defines the following two targets:
+#   1. `coverage_gcovr_html_target` runs all tests and collects coverage in html format
+#   2. `clean_coverage_gcovr_html` cleans coverage information
+# The collected coverage report resides in the coverage/ directory under the project's directory.
+# Function has no parameters
+function(add_cutie_coverage_gcovr_html_targets)
+    include(${CUTIE_DIR}/inc/CodeCoverage.cmake)
+    set(COVERAGE_DIR coverage_gcovr_html)
+    setup_target_for_coverage_gcovr_html(
+            NAME ${COVERAGE_DIR}
+	    BASE_DIRECTORY ${BASE_DIRECTORY}
+            EXECUTABLE ctest
+            EXCLUDE "${CUTIE_DIR}/*" "/usr/include/*")
+    add_custom_target(clean_coverage_gcovr_html
             rm --recursive --force ${COVERAGE_DIR}
             COMMAND find -iname "*.gcda" -delete
             COMMAND find -iname "*.gcno" -delete
