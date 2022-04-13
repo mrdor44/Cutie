@@ -131,3 +131,51 @@ function(add_cutie_coverage_targets)
             VERBATIM
             COMMENT "Deleting coverage information. Rebuild after this.")
 endfunction()
+
+
+# Defines the following two targets:
+#   1. `coverage_gcovr_xml` runs all tests and collects coverage in xml format
+#   2. `clean_coverage_gcovr_xml` cleans coverage information
+# The collected coverage report resides in the coverage/ directory under the project's directory.
+# Function has no parameters
+function(add_cutie_coverage_gcovr_targets)
+    include(${CUTIE_DIR}/inc/CodeCoverage.cmake)
+    set(COVERAGE_DIR coverage_gcovr_xml)
+    setup_target_for_coverage_gcovr_xml(
+            NAME ${COVERAGE_DIR}
+	    BASE_DIRECTORY ${BASE_DIRECTORY}
+            EXECUTABLE ctest
+            EXCLUDE "${CUTIE_DIR}/*" "/usr/include/*"
+			)
+    add_custom_target(clean_coverage_gcovr_xml
+            rm --recursive --force ${COVERAGE_DIR}
+            COMMAND find -iname "*.gcda" -delete
+            COMMAND find -iname "*.gcno" -delete
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            VERBATIM
+            COMMENT "Deleting coverage information. Rebuild after this.")
+endfunction()
+
+
+
+# Defines the following two targets:
+#   1. `coverage_gcovr_html_target` runs all tests and collects coverage in html format
+#   2. `clean_coverage_gcovr_html` cleans coverage information
+# The collected coverage report resides in the coverage/ directory under the project's directory.
+# Function has no parameters
+function(add_cutie_coverage_gcovr_html_targets)
+    include(${CUTIE_DIR}/inc/CodeCoverage.cmake)
+    set(COVERAGE_DIR coverage_gcovr_html)
+    setup_target_for_coverage_gcovr_html(
+            NAME ${COVERAGE_DIR}
+	    BASE_DIRECTORY ${BASE_DIRECTORY}
+            EXECUTABLE ctest
+            EXCLUDE "${CUTIE_DIR}/*" "/usr/include/*")
+    add_custom_target(clean_coverage_gcovr_html
+            rm --recursive --force ${COVERAGE_DIR}
+            COMMAND find -iname "*.gcda" -delete
+            COMMAND find -iname "*.gcno" -delete
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            VERBATIM
+            COMMENT "Deleting coverage information. Rebuild after this.")
+endfunction()
